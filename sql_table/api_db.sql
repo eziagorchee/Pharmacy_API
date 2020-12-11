@@ -69,7 +69,7 @@ CREATE TABLE `patients` (
   `bloodpressure` varchar(50) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `created` datetime NOT NULL DEFAULT current_timestamp()
+  `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -92,7 +92,7 @@ CREATE TABLE `products` (
   `category_id` int(11) DEFAULT NULL,
   `price` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
-  `created` datetime NOT NULL DEFAULT current_timestamp()
+  `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
