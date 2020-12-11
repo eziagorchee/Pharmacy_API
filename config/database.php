@@ -1,16 +1,30 @@
 <?php
 class Database{
   
-    private $cleardb_url = parse_url(getenv('CLEARDB_DATABASE_URL'));
-    private $cleardb_server = $this->cleardb_url['host'];
-    private $cleardb_username = $this->cleardb_url['user'];
-    private $cleardb_password = $this->cleardb_url['pass'];
-    private $cleardb_db = substr($this->cleardb_url['path'], 1);
+    private $cleardb_url;
+
+    private $cleardb_server;
+    private $cleardb_username;
+    private $cleardb_password;
+    private $cleardb_db;
+    
     // specify your own database credentials
-    private $host = $this->cleardb_server;
-    private $db_name = $this->cleardb_db;
-    private $username = $this->cleardb_username;
-    private $password = $this->cleardb_password;
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    public function __construct()
+    {
+        $this->cleardb_url=parse_url(getenv("CLEARDB_DATABASE_URL"));
+        $this->cleardb_server = $this->cleardb_url['host'];
+        $this->cleardb_db = substr($this->cleardb_url['path'], 1);
+        $this->cleardb_username = $this->cleardb_url['user'];
+        $this->cleardb_password = $this->cleardb_url['pass'];
+        $this->host = $this->cleardb_server;
+    $this->db_name = $this->cleardb_db;
+    $this->username = $this->cleardb_username;
+    $this->password = $this->cleardb_password;
+    }
     public $conn;
   
     // get the database connection
@@ -28,4 +42,3 @@ class Database{
         return $this->conn;
     }
 }
-?>
