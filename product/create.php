@@ -24,6 +24,7 @@ $data = json_decode(file_get_contents("php://input"));
 if(
     !empty($data->name) &&
     !empty($data->price) &&
+    !empty($data->quantity) &&
     !empty($data->description) &&
     !empty($data->category_id)
 ){
@@ -31,6 +32,7 @@ if(
     // set product property values
     $product->name = $data->name;
     $product->price = $data->price;
+    $product->quantity = $data->quantity;
     $product->description = $data->description;
     $product->category_id = $data->category_id;
     $product->created = date('Y-m-d H:i:s');

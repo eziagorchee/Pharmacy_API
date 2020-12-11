@@ -39,6 +39,7 @@ if($num>0){
             "name" => $name,
             "description" => html_entity_decode($description),
             "price" => $price,
+            "quantity" => $quantity,
             "category_id" => $category_id,
             "category_name" => $category_name
         );

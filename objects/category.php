@@ -39,7 +39,7 @@ public function read(){
             FROM
                 " . $this->table_name . "
             ORDER BY
-                name";
+                id";
   
     $stmt = $this->conn->prepare( $query );
     $stmt->execute();

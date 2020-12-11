@@ -1,21 +1,27 @@
 <?php
-class Product
+class Patient
 {
 
     // database connection and table name
     private $conn;
-    private $table_name = "products";
+    private $table_name = "patients";
 
     // object properties
     public $id;
-    public $name;
-    public $description;
-    public $price;
-    public $quantity;
-    public $category_id;
-    public $category_name;
-    public $created;
-    public $action;
+    public $first_name;
+    public $last_name;
+    public $age;
+    public $weight;
+    public $height;
+    public $gender;
+    public $address;
+    public $bloodgroup;
+    public $genotype;
+    public $temperature;
+    public $heartrate;
+    public $bloodpressure;
+    public $username;
+    public $password;
 
     // constructor with $db as database connection
     public function __construct($db)
@@ -28,14 +34,14 @@ class Product
 
         // select all query
         $query = "SELECT
-                c.name as category_name, p.id, p.name, p.description, p.price, p.category_id, p.quantity, p.created
+                c.name as category_name, p.id, p.name, p.description, p.price, p.category_id, p.created
             FROM
                 " . $this->table_name . " p
                 LEFT JOIN
                     categories c
                         ON p.category_id = c.id
             ORDER BY
-                p.id ASC";
+                p.created DESC";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -45,34 +51,75 @@ class Product
 
         return $stmt;
     }
-    // create product
-    function create()
+    // create patients
+    function register()
     {
+// check if username already exists
+        $check = "SELECT
+        p.username
+    FROM
+        " . $this->table_name . " p
+    WHERE
+        p.username = :c_user
+    LIMIT
+        0,1";
+            
+        $this->username = htmlspecialchars(strip_tags($this->username));
+        $c_stmt = $this->conn->prepare($check);
+        $c_stmt->bindParam(":c_user", $this->username);
+
+        if($c_stmt->execute()){
+            $exists = $c_stmt->rowCount();
+            if ($exists > 0) {
+                return false;
+            }
+        };
+
 
         // query to insert record
         $query = "INSERT INTO
                 " . $this->table_name . "
             SET
-                name=:name, price=:price, quantity=:quantity, description=:description, category_id=:category_id, created=:created";
+                first_name=:first_name, last_name=:last_name, age=:age, weight=:weight, height=:height, gender=:gender, address=:address, bloodgroup=:bloodgroup, genotype=:genotype, temperature=:temperature, heartrate=:heartrate, bloodpressure=:bloodpressure, username=:username, password=:password";
 
         // prepare query
         $stmt = $this->conn->prepare($query);
 
         // sanitize
-        $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->price = htmlspecialchars(strip_tags($this->price));
-        $this->quantity = htmlspecialchars(strip_tags($this->quantity));
-        $this->description = htmlspecialchars(strip_tags($this->description));
-        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-        $this->created = htmlspecialchars(strip_tags($this->created));
+        $this->first_name = htmlspecialchars(strip_tags($this->first_name));
+        $this->last_name = htmlspecialchars(strip_tags($this->last_name));
+        $this->age = htmlspecialchars(strip_tags($this->age));
+        $this->weight = htmlspecialchars(strip_tags($this->weight));
+        $this->height = htmlspecialchars(strip_tags($this->height));
+        $this->gender = htmlspecialchars(strip_tags($this->gender));
+        $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->bloodgroup = htmlspecialchars(strip_tags($this->bloodgroup));
+        $this->genotype = htmlspecialchars(strip_tags($this->genotype));
+        $this->temperature = htmlspecialchars(strip_tags($this->temperature));
+        $this->heartrate = htmlspecialchars(strip_tags($this->heartrate));
+        $this->bloodpressure = htmlspecialchars(strip_tags($this->bloodpressure));
+        $this->username = htmlspecialchars(strip_tags($this->username));
+        $this->password = md5(htmlspecialchars(strip_tags($this->password)));
+
+
 
         // bind values
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":price", $this->price);
-        $stmt->bindParam(":quantity", $this->quantity);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":category_id", $this->category_id);
-        $stmt->bindParam(":created", $this->created);
+        $stmt->bindParam(":first_name", $this->first_name);
+        $stmt->bindParam(":last_name", $this->last_name);
+        $stmt->bindParam(":age", $this->age);
+        $stmt->bindParam(":weight", $this->weight);
+        $stmt->bindParam(":height", $this->height);
+        $stmt->bindParam(":gender", $this->gender);
+        $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":bloodgroup", $this->bloodgroup);
+        $stmt->bindParam(":genotype", $this->genotype);
+        $stmt->bindParam(":temperature", $this->temperature);
+        $stmt->bindParam(":heartrate", $this->heartrate);
+        $stmt->bindParam(":bloodpressure", $this->bloodpressure);
+        $stmt->bindParam(":username", $this->username);
+        $stmt->bindParam(":password", $this->password);
+
+
 
         // execute query
         if ($stmt->execute()) {
@@ -87,7 +134,7 @@ class Product
 
         // query to read single record
         $query = "SELECT
-                c.name as category_name, p.id, p.name, p.description, p.price, p.quantity, p.category_id, p.created
+                c.name as category_name, p.id, p.name, p.description, p.price, p.category_id, p.created
             FROM
                 " . $this->table_name . " p
                 LEFT JOIN
@@ -113,7 +160,6 @@ class Product
         if ($row) {
             $this->name = $row['name'];
             $this->price = $row['price'];
-            $this->quantity = $row['quantity'];
             $this->description = $row['description'];
             $this->category_id = $row['category_id'];
             $this->category_name = $row['category_name'];
@@ -129,7 +175,6 @@ class Product
             SET
                 name = :name,
                 price = :price,
-                quantity = :quantity,
                 description = :description,
                 category_id = :category_id
             WHERE
@@ -141,7 +186,6 @@ class Product
         // sanitize
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->price = htmlspecialchars(strip_tags($this->price));
-        $this->quantity = htmlspecialchars(strip_tags($this->quantity));
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->category_id = htmlspecialchars(strip_tags($this->category_id));
         $this->id = htmlspecialchars(strip_tags($this->id));
@@ -149,7 +193,6 @@ class Product
         // bind new values
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':price', $this->price);
-        $stmt->bindParam(':quantity', $this->quantity);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':category_id', $this->category_id);
         $stmt->bindParam(':id', $this->id);
@@ -163,79 +206,6 @@ class Product
                 return false;
             }
         }
-
-        return false;
-    }
-
-    function update_quantity()
-    {
-
-        $get_row = "SELECT
-                p.quantity
-            FROM
-                " . $this->table_name . " p
-            WHERE
-                p.id = :id
-            LIMIT
-                0,1";
-        // prepare query statement
-        $g_stmt = $this->conn->prepare($get_row);
-        $this->id = htmlspecialchars(strip_tags($this->id));
-
-        $g_stmt->bindParam(':id', $this->id);
-
-        // execute query
-        $g_stmt->execute();
-
-        // get retrieved row
-        $row = $g_stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            $available = $row['quantity'];
-
-            // update query
-            $query = "UPDATE
-                        " . $this->table_name . "
-                    SET
-                        quantity = :quantity
-                    WHERE
-                        id = :id";
-
-            // prepare query statement
-            $stmt = $this->conn->prepare($query);
-
-            // sanitize
-            $this->quantity = htmlspecialchars(strip_tags($this->quantity));
-            $this->id = htmlspecialchars(strip_tags($this->id));
-            //This diffrentiates between adding and removing drugs, 0- Add; 1- remove.
-            if ($this->action == 0) {
-                $this->quantity = $available + $this->quantity;
-            } else if ($this->action == 1) {
-                $this->quantity = $available - $this->quantity;
-                if($this->quantity < 0){
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            // bind new values
-            $stmt->bindParam(':quantity', $this->quantity);
-            $stmt->bindParam(':id', $this->id);
-
-            // execute the query
-            if ($stmt->execute()) {
-                $exists = $stmt->rowCount();
-                if ($exists > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-
-
 
         return false;
     }
@@ -273,7 +243,7 @@ class Product
 
         // select all query
         $query = "SELECT
-                c.name as category_name, p.id, p.name, p.description, p.price, p.quantity, p.category_id, p.created
+                c.name as category_name, p.id, p.name, p.description, p.price, p.category_id, p.created
             FROM
                 " . $this->table_name . " p
                 LEFT JOIN
@@ -282,7 +252,7 @@ class Product
             WHERE
                 p.name LIKE ? OR p.description LIKE ? OR c.name LIKE ?
             ORDER BY
-                p.id ASC";
+                p.created DESC";
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
@@ -313,7 +283,7 @@ class Product
                 LEFT JOIN
                     categories c
                         ON p.category_id = c.id
-            ORDER BY p.id ASC
+            ORDER BY p.created DESC
             LIMIT ?, ?";
 
         // prepare query statement

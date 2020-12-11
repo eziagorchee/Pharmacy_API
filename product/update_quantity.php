@@ -22,22 +22,16 @@ $data = json_decode(file_get_contents("php://input"));
   
 // set ID property of product to be edited
 $product->id = $data->id;
-  
-// set product property values
-$product->name = $data->name;
-$product->price = $data->price;
 $product->quantity = $data->quantity;
-$product->description = $data->description;
-$product->category_id = $data->category_id;
-  
+$product->action = $data->action;  
 // update the product
-if($product->update()){
+if($product->update_quantity()){
   
     // set response code - 200 ok
     http_response_code(200);
   
     // tell the user
-    echo json_encode(array("message" => "Product was updated."));
+    echo json_encode(array("message" => "Drug quantity was updated."));
 }
   
 // if unable to update the product, tell the user
@@ -47,6 +41,6 @@ else{
     http_response_code(503);
   
     // tell the user
-    echo json_encode(array("message" => "Unable to update product."));
+    echo json_encode(array("message" => "Unable to update drug quantity."));
 }
 ?>
